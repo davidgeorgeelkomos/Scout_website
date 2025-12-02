@@ -1,0 +1,155 @@
+{% extends "layout.html" %}
+{% block title %} - Register{% endblock %}
+{% block main %}
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div class="auth-bg">
+  <div class="auth-container">
+
+    <div class="card shadow-lg p-4 auth-card bg-white">
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+          <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#login">Login</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#signup">Sign Up</button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+
+        <!-- LOGIN TAB -->
+        <div class="tab-pane fade show active" id="login">
+          <form action="/login" method="POST">
+            <div class="mb-3">
+              <label>Email or Username</label>
+              <input type="text" class="form-control" name="user" required>
+            </div>
+            <div class="mb-3">
+              <label>Password</label>
+              <input type="password" class="form-control" name="password" required>
+            </div>
+            <button class="btn btn-primary w-100">Login</button>
+          </form>
+        </div>
+
+        <!-- SIGNUP TAB -->
+        <div class="tab-pane fade" id="signup">
+          <form action="/register" method="POST">
+
+            <div class="mb-3">
+              <label>Full Name</label>
+              <input type="text" class="form-control" name="username" required>
+            </div>
+
+            <div class="mb-3">
+              <label>Password</label>
+              <input type="password" class="form-control" name="password" required>
+            </div>
+
+            <div class="mb-3">
+              <label>Confirm Password</label>
+              <input type="password" class="form-control" name="confirmation" required>
+            </div>
+
+            <div class="mb-3">
+              <label>Birthday</label>
+              <input type="date" class="form-control" name="birthday" required>
+            </div>
+
+            <div class="mb-3">
+              <label>Phone Number</label>
+              <input type="text" class="form-control" name="phone"
+                     placeholder="+20**********"
+                     pattern="\+20[0-9]{10}" required>
+            </div>
+
+            <div class="mb-3">
+              <label>Educational Stage</label>
+              <select class="form-select" name="stage" required>
+                <option disabled selected>Select your stage</option>
+                <option value="primary">ابتدائي</option>
+                <option value="middle">اعدادي</option>
+                <option value="high">ثانوي</option>
+                <option value="older">كليات أو أكبر</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label>Home Location (Click on map)</label>
+              <div id="map"></div>
+            </div>
+
+            <input type="hidden" id="lat" name="lat">
+            <input type="hidden" id="lng" name="lng">
+
+            <button class="btn btn-success w-100">Create Account</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+<script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
+
+<script>
+  // Create the map
+  var map = L.map('map').setView([26.8206, 30.8025], 6);
+
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+  var marker;
+
+  // --- When user clicks on the map ---
+  map.on('click', function(e) {
+      if (marker) map.removeLayer(marker);
+      marker = L.marker(e.latlng).addTo(map);
+      document.getElementById("lat").value = e.latlng.lat.toFixed(6);
+      document.getElementById("lng").value = e.latlng.lng.toFixed(6);
+  });
+
+  // --- Add locate button ---
+  L.control.locate({
+      position: 'topright',
+      setView: true,
+      flyTo: true,
+      keepCurrentZoomLevel: false
+  }).addTo(map);
+
+  // --- Auto detect location ---
+  map.on("locationfound", function (e) {
+
+      const lat = e.latitude;
+      const lng = e.longitude;
+
+      // Auto zoom onto user location (street level)
+      map.setView([lat, lng], 16);
+
+      // Place marker
+      if (!marker) {
+        marker = L.marker([lat, lng]).addTo(map);
+      } else {
+        marker.setLatLng([lat, lng]);
+      }
+
+      // Save values for the form
+      document.getElementById("lat").value = lat.toFixed(6);
+      document.getElementById("lng").value = lng.toFixed(6);
+  });
+
+  // Start locating
+  map.locate({ setView: true, maxZoom: 16 });
+</script>
+
+
+{% endblock %}

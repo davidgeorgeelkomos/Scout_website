@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block title %} - Home{% endblock %}
+
+{% block main %}
+
+{% if not user %}
+  <!-- Hero Section -->
+  <header class="hero d-flex align-items-center justify-content-center text-center text-white">
+    <div>
+      <h1 class="display-4">مجموعات العذراء الكشفية</h1>
+      <p class="lead">هنا نشارك بعض من أنشطتنا، خدماتنا، وأعمالنا الكشفية في الكنيسة.</p>
+    </div>
+  </header>
+
+  <!-- Summary Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-4">من نحن</h2>
+      <p class="text-center">
+        مجموعات العذراء الكشفية هي خدمة كشفية كنسية تعمل على تربية الشباب على قيم المحبة،
+        الانضباط، التعاون، وتنمية المواهب. نقوم بالعديد من الأنشطة الكشفية والروحية
+        والخدمية لخدمة الكنيسة والمجتمع.
+      </p>
+    </div>
+  </section>
+
+  <!-- Public Sectors List -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <h3 class="text-center mb-4">القطاعات الكشفية</h3>
+      <div class="row">
+        {% for s in sectors %}
+        <div class="col-md-6 mb-3">
+          <div class="card shadow-sm p-3">
+            <h5 class="mb-2">{{ s.name }}</h5>
+            <p class="text-muted mb-0">{{ s.description }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+{% else %}
+
+  <!-- Logged User Section -->
+  <h2>Welcome, {{ user.username }}!</h2>
+  <p>Your role: <strong>{{ user.role }}</strong></p>
+
+  {% if user.sector_id %}
+    <p>Your sector: 
+      <a href="{{ url_for('sector_page', sector_id=user.sector_id) }}">Sector {{ user.sector_id }}</a>
+    </p>
+  {% else %}
+    <p>You are not assigned to a sector yet.</p>
+  {% endif %}
+
+  {% if user.role == 'leader' %}
+    <div class="alert alert-info">As a leader, you can manage your sector's content.</div>
+  {% endif %}
+
+{% endif %}
+
+{% endblock %}

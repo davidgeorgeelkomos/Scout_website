@@ -1,0 +1,45 @@
+/* ============================
+   HERO (your existing code)
+============================ */
+.hero {
+  background: url('/static/images/summery.jpg') center/cover no-repeat;
+  height: 70vh;
+}
+
+/* ============================
+   FULL SCREEN REGISTER BACKGROUND
+============================ */
+.auth-bg {
+  background: url('/static/images/register.jpg') center/cover no-repeat;
+  min-height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+/* ============================
+   CENTERED user interactive form
+============================ */
+.auth-container {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form Card */
+.auth-card {
+  max-width: 420px;
+  width: 100%;
+  border-radius: 15px;
+}
+
+/* ============================
+   MAP STYLE
+============================ */
+#map {
+  height: 250px;
+  border-radius: 10px;
+}
