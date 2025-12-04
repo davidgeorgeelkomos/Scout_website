@@ -3,6 +3,7 @@ from cs50 import SQL
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask import render_template
 
 app = Flask(__name__)
 
@@ -14,6 +15,11 @@ Session(app)
 # Database
 db = SQL("sqlite:///scout.db")
 
+# -------------------------------------------
+# THE APOLOGY FUNCTION
+# -------------------------------------------
+def apology(message, code=400):
+    return render_template("apology.html", top=code, bottom=message), code
 
 # -------------------------------------------
 # HELPERS
@@ -45,51 +51,79 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        name = request.form.get("name")
+
+        # Form inputs
+        name = request.form.get("username")
         password = request.form.get("password")
-        confirm = request.form.get("confirm")
+        confirmation = request.form.get("confirmation")
         birthday = request.form.get("birthday")
         phone = request.form.get("phone")
         stage = request.form.get("stage")
-        location = request.form.get("home_location")
+        lat = request.form.get("lat")
+        lng = request.form.get("lng")
 
-        if not name or not password or not confirm:
-            return "Missing fields"
+        # Validate required fields
+        if not name or not password or not confirmation or not birthday or not phone or not stage:
+            return apology("All fields are required")
 
-        if password != confirm:
-            return "Passwords do not match"
+        # Password match
+        if password != confirmation:
+            return apology("Passwords do not match")
 
-        hash_pass = generate_password_hash(password)
+        # Hash password
+        hash_pw = generate_password_hash(password)
 
-        db.execute("""
-            INSERT INTO users (name, hash, birthday, phone, stage, home_location)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, name, hash_pass, birthday, phone, stage, location)
+        # Insert user (approved = 1 so everything works now)
+        try:
+            new_id = db.execute(
+                "INSERT INTO users (name, hash, birthday, phone, stage, home_location, approved) VALUES (?, ?, ?, ?, ?, ?, 1)",
+                name, hash_pw, birthday, phone, stage, f"{lat},{lng}"
+            )
+        except:
+            return apology("Username already exists")
 
-        return redirect("/login")
+        # Save coordinates into maps table
+        db.execute(
+            "INSERT INTO maps (user_id, latitude, longitude) VALUES (?, ?, ?)",
+            new_id, lat, lng
+        )
 
-    return render_template("register.html")
+        # AUTO LOGIN THE USER
+        session["user_id"] = new_id
 
-
-# LOGIN
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    session.clear()
-
-    if request.method == "POST":
-        username = request.form.get("name")
-        password = request.form.get("password")
-
-        user = db.execute("SELECT * FROM users WHERE name = ?", username)
-
-        if len(user) != 1 or not check_password_hash(user[0]["hash"], password):
-            return "Invalid login"
-
-        session["user_id"] = user[0]["id"]
+        # Redirect to main page
         return redirect("/")
 
-    return render_template("login.html")
+    # If GET request
+    return render_template("register.html")
 
+# LOGIN
+@app.route("/login", methods=["POST"])
+def login():
+    # Clear old session
+    session.clear()
+
+    # Get form data
+    user_input = request.form.get("user")
+    password = request.form.get("password")
+
+    if not user_input or not password:
+        return "Must provide username/email and password", 400
+
+    # Check database for user
+    rows = db.execute(
+        "SELECT * FROM users WHERE name = ? OR phone = ?", 
+        user_input, user_input
+    )
+
+    if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
+        return "Invalid username or password", 403
+
+    # Successful login → save user id in session
+    session["user_id"] = rows[0]["id"]
+
+    # Redirect to main page
+    return redirect("/")
 
 # LOGOUT
 @app.route("/logout")

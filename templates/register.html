@@ -102,54 +102,42 @@
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
 
 <script>
-  // Create the map
-  var map = L.map('map').setView([26.8206, 30.8025], 6);
+  var map = L.map('map').setView([30.0444, 31.2357], 6);
 
-  // Add OpenStreetMap tiles
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-  var marker;
+  let marker;
 
-  // --- When user clicks on the map ---
-  map.on('click', function(e) {
-      if (marker) map.removeLayer(marker);
-      marker = L.marker(e.latlng).addTo(map);
-      document.getElementById("lat").value = e.latlng.lat.toFixed(6);
-      document.getElementById("lng").value = e.latlng.lng.toFixed(6);
-  });
+  // Auto detect location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
 
-  // --- Add locate button ---
-  L.control.locate({
-      position: 'topright',
-      setView: true,
-      flyTo: true,
-      keepCurrentZoomLevel: false
-  }).addTo(map);
+        map.setView([lat, lng], 16);
 
-  // --- Auto detect location ---
-  map.on("locationfound", function (e) {
-
-      const lat = e.latitude;
-      const lng = e.longitude;
-
-      // Auto zoom onto user location (street level)
-      map.setView([lat, lng], 16);
-
-      // Place marker
-      if (!marker) {
         marker = L.marker([lat, lng]).addTo(map);
-      } else {
-        marker.setLatLng([lat, lng]);
+
+        document.getElementById("lat").value = lat;
+        document.getElementById("lng").value = lng;
       }
+    );
+  }
 
-      // Save values for the form
-      document.getElementById("lat").value = lat.toFixed(6);
-      document.getElementById("lng").value = lng.toFixed(6);
+  // User clicks to change location
+  map.on("click", function (e) {
+    if (marker) {
+      marker.setLatLng(e.latlng);
+    } else {
+      marker = L.marker(e.latlng).addTo(map);
+    }
+
+    document.getElementById("lat").value = e.latlng.lat;
+    document.getElementById("lng").value = e.latlng.lng;
   });
-
-  // Start locating
-  map.locate({ setView: true, maxZoom: 16 });
 </script>
+
 
 
 {% endblock %}
