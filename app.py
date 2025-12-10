@@ -63,8 +63,16 @@ def register():
         lng = request.form.get("lng")
 
         # Validate required fields
-        if not name or not password or not confirmation or not birthday or not phone or not stage:
-            return apology("All fields are required")
+        if not name:
+            return apology("Name cannot be empty")
+        if not password:
+            return apology("Password cannot be empty")
+        if not birthday:
+            return apology("Birthday cannot be empty")
+        if not phone:
+            return apology("Phone number cannot be empty")
+        if not stage:
+            return apology("Stage cannot be empty")
 
         # Password match
         if password != confirmation:
@@ -82,20 +90,19 @@ def register():
         except:
             return apology("Username already exists")
 
-        # Save coordinates into maps table
-        db.execute(
-            "INSERT INTO maps (user_id, latitude, longitude) VALUES (?, ?, ?)",
-            new_id, lat, lng
-        )
+        # MAP LOCATION 
+        # db.execute(
+        #     "INSERT INTO maps (user_id, latitude, longitude) VALUES (?, ?, ?)",
+        #     new_id, lat, lng
+        # )
 
         # AUTO LOGIN THE USER
         session["user_id"] = new_id
 
-        # Redirect to main page
         return redirect("/")
 
-    # If GET request
     return render_template("register.html")
+
 
 # LOGIN
 @app.route("/login", methods=["POST"])
