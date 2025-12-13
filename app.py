@@ -90,11 +90,11 @@ def register():
         except:
             return apology("Username already exists")
 
-        # MAP LOCATION 
-        # db.execute(
-        #     "INSERT INTO maps (user_id, latitude, longitude) VALUES (?, ?, ?)",
-        #     new_id, lat, lng
-        # )
+         # MAP LOCATION 
+        db.execute(
+             "INSERT INTO maps (user_id, latitude, longitude) VALUES (?, ?, ?)",
+             new_id, lat, lng
+         )
 
         # AUTO LOGIN THE USER
         session["user_id"] = new_id
@@ -107,30 +107,28 @@ def register():
 # LOGIN
 @app.route("/login", methods=["POST"])
 def login():
-    # Clear old session
     session.clear()
 
-    # Get form data
     user_input = request.form.get("user")
     password = request.form.get("password")
 
     if not user_input or not password:
-        return "Must provide username/email and password", 400
+        return apology("Must provide username or phone and password", 400)
 
-    # Check database for user
     rows = db.execute(
-        "SELECT * FROM users WHERE name = ? OR phone = ?", 
-        user_input, user_input
+        "SELECT * FROM users WHERE name = ? OR phone = ?",
+        user_input.strip(), user_input.strip()
     )
 
-    if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
-        return "Invalid username or password", 403
+    if len(rows) != 1:
+        return apology("Invalid username or phone", 403)
 
-    # Successful login → save user id in session
+    if not check_password_hash(rows[0]["hash"], password):
+        return apology("Invalid password", 403)
+
     session["user_id"] = rows[0]["id"]
-
-    # Redirect to main page
     return redirect("/")
+
 
 # LOGOUT
 @app.route("/logout")
