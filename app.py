@@ -58,50 +58,61 @@ def register():
         confirmation = request.form.get("confirmation")
         birthday = request.form.get("birthday")
         phone = request.form.get("phone")
-        stage = request.form.get("stage")
+        sector = request.form.get("stage")
         lat = request.form.get("lat")
         lng = request.form.get("lng")
 
-        # Validate required fields
-        if not name:
-            return apology("Name cannot be empty")
-        if not password:
-            return apology("Password cannot be empty")
-        if not birthday:
-            return apology("Birthday cannot be empty")
-        if not phone:
-            return apology("Phone number cannot be empty")
-        if not stage:
-            return apology("Stage cannot be empty")
+        print("FORM DATA:", name, password, birthday, phone, sector, lat, lng)
 
-        # Password match
+        # Validation
+        if not all([name, password, confirmation, birthday, phone, sector, lat, lng]):
+            return apology("All fields are required", 400)
+
         if password != confirmation:
-            return apology("Passwords do not match")
+            return apology("Passwords do not match", 400)
 
         # Hash password
         hash_pw = generate_password_hash(password)
+        print("Password hashed")
 
-        # Insert user (approved = 1 so everything works now)
+        # Insert user
         try:
             new_id = db.execute(
-                "INSERT INTO users (name, hash, birthday, phone, stage, home_location, approved) VALUES (?, ?, ?, ?, ?, ?, 1)",
-                name, hash_pw, birthday, phone, stage, f"{lat},{lng}"
+                """
+                INSERT INTO users (name, hash, birthday, phone, sector)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                name, hash_pw, birthday, phone, sector
             )
-        except:
-            return apology("Username already exists")
+        except Exception as e:
+            print("DB ERROR (users table)")
+            print(type(e))
+            print(e.args)
+            print(e)
+            return apology("Database error (users)", 500)
 
-         # MAP LOCATION 
-        db.execute(
-             "INSERT INTO maps (user_id, latitude, longitude) VALUES (?, ?, ?)",
-             new_id, lat, lng
-         )
+        # Insert map location
+        try:
+            db.execute(
+                """
+                INSERT INTO maps (user_id, latitude, longitude)
+                VALUES (?, ?, ?)
+                """,
+                new_id, lat, lng
+            )
+        except Exception as e:
+            print("DB ERROR (maps table)")
+            print(type(e))
+            print(e.args)
+            print(e)
+            return apology("Database error (maps)", 500)
 
-        # AUTO LOGIN THE USER
+        # Auto login
         session["user_id"] = new_id
-
         return redirect("/")
 
     return render_template("register.html")
+
 
 
 # LOGIN
