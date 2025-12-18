@@ -47,7 +47,7 @@
      <header class="hero d-flex align-items-center justify-content-center text-center text-white">
     <div>
       <h1 class="display-4">مجموعات العذراء الكشفية</h1>
-      <h2>Welcome, {{ user.name }}!</h2>
+      <h2>Welcome, <strong>{{ user.name }}!</strong></h2>
     </div>
   </header>
 
@@ -63,15 +63,13 @@
     </div>
   </section>
 
-  {% if user.sector_id %}
-    <p>Your sector: {{ user.sector }}</p>
-  {% else %}
-    <p>You are not assigned to a sector yet.</p>
-  {% endif %}
+{% if user %}
+  <h3>Welcome, {{ user.name }} 👋</h3>
+  <p>Sector: <strong>{{ user.sector }}</strong></p>
+{% else %}
+  <h3>Welcome to the Scout Website</h3>
+{% endif %}
 
-  {% if user.role == 'leader' %}
-    <div class="alert alert-info">As a leader, you can manage your sector's content.</div>
-  {% endif %}
 
 {% endif %}
 
