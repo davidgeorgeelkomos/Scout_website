@@ -40,11 +40,17 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    if not session.get("user_id"):
-        return render_template("index_public.html")
-    
-    user = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])[0]
-    return render_template("index_private.html", user=user)
+    user = None
+
+    if session.get("user_id"):
+        rows = db.execute(
+            "SELECT name, sector FROM users WHERE id = ?",
+            session["user_id"]
+        )
+        if rows:
+            user = rows[0]
+
+    return render_template("index_public.html", user=user)
 
 
 # REGISTER
@@ -139,6 +145,18 @@ def login():
 
     session["user_id"] = rows[0]["id"]
     return redirect("/")
+
+@app.route("/map")
+@login_required
+def map_view():
+    # Join users + maps so we can show names on markers
+    rows = db.execute("""
+        SELECT users.name, maps.latitude, maps.longitude
+        FROM maps
+        JOIN users ON users.id = maps.user_id
+    """)
+
+    return render_template("map.html", locations=rows)
 
 
 # LOGOUT

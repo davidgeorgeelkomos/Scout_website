@@ -33,10 +33,10 @@
                 <ul class="navbar-nav ms-auto">
 
                     {% if session.user_id %}
-                        <li class="nav-item"><a class="nav-link" href="/profile">الملف الشخصي</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/gallery">المعرض</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/map">الخريطة</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/logout">تسجيل الخروج</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/gallery">Gallery</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/map">Map</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
 
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="/gallery">Gallery</a></li>
@@ -50,9 +50,9 @@
     </nav>
 
     <!-- MAIN BODY -->
-    <main class="container my-4 flex-grow-1">
+    <body class="container my-4 flex-grow-1">
         {% block main %}{% endblock %}
-    </main>
+    </body>
 
     <!-- FOOTER -->
     <footer class="bg-dark text-white text-center py-4 mt-auto">

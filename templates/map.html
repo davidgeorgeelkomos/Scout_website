@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %} - Users Map{% endblock %}
+
+{% block main %}
+
+<!-- Leaflet -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<h2 class="text-center mb-3">All Scouts Locations</h2>
+
+<div id="map" style="height: 80vh; border-radius: 12px;"></div>
+
+<script>
+  // Create map centered on Egypt
+  const map = L.map('map').setView([26.8206, 30.8025], 6);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(map);
+
+  // Locations from Flask
+  const locations = {{ locations | tojson }};
+
+  locations.forEach(loc => {
+    L.marker([loc.latitude, loc.longitude])
+      .addTo(map)
+      .bindPopup(`<b>${loc.name}</b>`);
+  });
+</script>
+
+{% endblock %}
