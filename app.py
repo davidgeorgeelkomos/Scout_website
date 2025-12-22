@@ -146,17 +146,35 @@ def login():
     session["user_id"] = rows[0]["id"]
     return redirect("/")
 
+# MAP PAGE displaying all users
 @app.route("/map")
-@login_required
-def map_view():
-    # Join users + maps so we can show names on markers
-    rows = db.execute("""
-        SELECT users.name, maps.latitude, maps.longitude
-        FROM maps
-        JOIN users ON users.id = maps.user_id
+def map_page():
+    locations = db.execute("""
+        SELECT users.name, users.sector, maps.latitude, maps.longitude
+        FROM users
+        JOIN maps ON users.id = maps.user_id
     """)
+    return render_template("map.html", locations=locations)
 
-    return render_template("map.html", locations=rows)
+
+# GALLERY PAGE
+@app.route("/gallery")
+def gallery():
+    return render_template("gallery.html")
+
+
+# ABOUT PAGE
+@app.route("/about")
+def about():
+    user = None
+
+    if session.get("user_id"):
+        user = db.execute(
+            "SELECT name, sector FROM users WHERE id = ?",
+            session["user_id"]
+        )[0]
+
+    return render_template("about.html", user=user)
 
 
 # LOGOUT

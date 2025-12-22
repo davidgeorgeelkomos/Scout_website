@@ -1,5 +1,5 @@
 /* ============================
-   HERO (your existing code)
+   HERO (the main banner at the top)
 ============================ */
 .hero {
   background: url('/static/images/summery.jpg') center/cover no-repeat;
@@ -43,3 +43,13 @@
   height: 250px;
   border-radius: 10px;
 }
+
+/* ============================
+   about page p1
+============================ */
+.about-p1 {
+  background: url('/static/images/about1.jpg') center/cover no-repeat;
+  min-height: 400px;
+  border-radius: 10px;
+}
+
