@@ -4,8 +4,7 @@
 {% block main %}
 
 <!-- Hero -->
-<header class="hero d-flex align-items-center justify-content-center text-center text-white"
-  style="height:40vh; background:url('{{ url_for('static', filename='images/gallery-hero.jpg') }}') no-repeat center center/cover;">
+  <header class="hero d-flex align-items-center justify-content-center text-center text-white">
   <div>
     <h1 class="display-4">Our Scouts Gallery</h1>
     <p class="lead">Photos and videos from our activities</p>
@@ -17,53 +16,61 @@
   <h2 class="text-center mb-4">Photos</h2>
   <div class="row">
 
+    <!-- Photo 1 -->
     <div class="col-md-4 mb-4">
       <div class="card">
-        <img src="{{ url_for('static', filename='static\images\p1.jpg') }}" class="card-img-top" alt="Scout Activity">
-        <div class="card-body">
-          <p class="card-text text-center">حفلة نسر وراعي</p>
+        <div class="about-p3"></div>
+        <div class="card-body text-center">
+          <p class="card-text">حفلة نسر وراعي</p>
         </div>
       </div>
     </div>
 
+    <!-- Photo 2 -->
     <div class="col-md-4 mb-4">
       <div class="card">
-        <img src="{{ url_for('static', filename='static\images\p2.jpg') }}" class="card-img-top" alt="Scout Activity">
-        <div class="card-body">
-          <p class="card-text text-center">صورة مع مثلث الرحمات الانبا باخوميوس</p>
+        <div class="about-p2"></div>
+        <div class="card-body text-center">
+          <p class="card-text">صورة مع مثلث الرحمات الانبا باخوميوس</p>
         </div>
       </div>
     </div>
 
+    <!-- Photo 3 -->
     <div class="col-md-4 mb-4">
       <div class="card">
-        <img src="{{ url_for('static', filename='static\images\p3.jpg') }}" class="card-img-top" alt="Scout Activity">
-        <div class="card-body">
-          <p class="card-text text-center">حفلة الوعد</p>
+        <div class="about-p1"></div>
+        <div class="card-body text-center">
+          <p class="card-text">حفلة الوعد</p>
         </div>
       </div>
     </div>
 
   </div>
-</section>
+
+  </section>
 
 <!-- Videos Section -->
 <section class="container py-5">
   <h2 class="text-center mb-4">Videos</h2>
-  <div class="row">
 
-    <div class="col-md-6 mb-4">
-      <video class="w-100 rounded" controls>
-        <source src="{{ url_for('static', filename='static\images\video_1.mp4') }}" type="video/mp4">
+  <div class="row justify-content-center">
+
+    <div class="col-12 col-md-6 mb-4 d-flex justify-content-center">
+      <video class="video-responsive" controls preload="metadata">
+        <source src="{{ url_for('static', filename='images/video_1.mp4') }}" type="video/mp4">
       </video>
     </div>
 
-    <div class="col-md-6 mb-4">
-      <video class="w-100 rounded" controls>
-        <source src="{{ url_for('static', filename='static\images\video_2.mp4') }}" type="video/mp4">
+    <div class="col-12 col-md-6 mb-4 d-flex justify-content-center">
+      <video class="video-responsive" controls preload="metadata">
+        <source src="{{ url_for('static', filename='images/video_2.mp4') }}" type="video/mp4">
+      </video>
     </div>
 
   </div>
 </section>
+
+
 
 {% endblock %}
